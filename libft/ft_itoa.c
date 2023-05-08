@@ -3,67 +3,78 @@
 /*                                                        :::      ::::::::   */
 /*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aatki <aatki@student.42.fr>                +#+  +:+       +#+        */
+/*   By: houaslam <houaslam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/18 08:02:10 by aatki             #+#    #+#             */
-/*   Updated: 2022/10/27 22:08:28 by aatki            ###   ########.fr       */
+/*   Created: 2022/10/15 13:40:59 by houaslam          #+#    #+#             */
+/*   Updated: 2022/11/07 21:12:40 by houaslam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static int	compteur(long *nb, int *sign)
+static char	*ft_sign(long int nb, int j, char *str)
 {
-	int		cmpt;
-	long	i;
+	int	i;
 
-	cmpt = 0;
-	i = *nb;
-	if (*nb < 0)
+	i = 0;
+	if (nb < 0)
 	{
-		*sign = -1;
-		*nb *= -1;
+		nb *= -1;
+		str[i] = '-';
+		i++;
 	}
-	else
-		*sign = 1;
-	if (i < 0)
+	if (nb >= 0)
 	{
-		i = i * (-1);
-		cmpt++;
+		while (j > 0)
+		{
+			str[i] = nb / j + 48;
+			nb %= j;
+			j /= 10;
+			i++;
+		}
 	}
-	while (i >= 1)
+	str[i] = '\0';
+	return (str);
+}
+
+static int	ft_count(long int nb)
+{
+	int	count;
+
+	count = 1;
+	if (nb < 0)
 	{
-		i = i / 10;
-		cmpt++;
+		nb *= -1;
+		count++;
 	}
-	return (cmpt);
+	while (nb >= 10)
+	{
+		nb /= 10;
+		count++;
+	}
+	return (count);
 }
 
 char	*ft_itoa(int n)
 {
-	char	*itoa;
-	int		cmpt;
-	long	i;
-	int		sign;
-	long	nb;
+	int		j;
+	int		count;
+	char	*p;
+	int		i;
 
-	nb = n;
-	i = n;
-	cmpt = compteur(&nb, &sign);
-	if (i == 0)
-		return (ft_strdup("0"));
-	itoa = ft_calloc(1, cmpt + 1);
-	if (!itoa)
+	i = 0;
+	j = 1;
+	count = ft_count(n);
+	p = (char *)malloc(sizeof(char) * (count + 1));
+	if (!p)
 		return (NULL);
-	i = cmpt;
-	itoa[i--] = '\0';
-	while (nb)
+	if (n < 0)
+		count--;
+	while (count - 1 > 0)
 	{
-		itoa[i] = nb % 10 + '0';
-		nb = nb / 10;
-		i--;
+		j *= 10;
+		count--;
 	}
-	if (sign == -1)
-		itoa[0] = '-';
-	return (itoa);
+	ft_sign(n, j, p);
+	return (p);
 }

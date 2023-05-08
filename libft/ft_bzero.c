@@ -5,22 +5,23 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: aatki <aatki@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/09 00:41:36 by aatki             #+#    #+#             */
-/*   Updated: 2022/10/27 22:59:06 by aatki            ###   ########.fr       */
+/*   Created: 2022/10/08 09:46:52 by houaslam          #+#    #+#             */
+/*   Updated: 2023/04/29 15:15:12 by aatki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	ft_bzero(void *o, size_t len)
+void	ft_bzero(void *str, size_t n )
 {
-	unsigned char	*s;
+	size_t	i;
+	char	*s;
 
-	s = (unsigned char *)o;
-	while (len > 0)
+	s = str;
+	i = 0;
+	while (i < n)
 	{
-		*s = 0;
-		len--;
-		s++;
+		s[i] = '\0';
+		i++;
 	}
 }

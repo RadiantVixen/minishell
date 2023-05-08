@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strncmp.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aatki <aatki@student.42.fr>                +#+  +:+       +#+        */
+/*   By: houaslam <houaslam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/10 23:40:31 by aatki             #+#    #+#             */
-/*   Updated: 2022/10/27 15:03:13 by aatki            ###   ########.fr       */
+/*   Created: 2022/10/07 16:34:27 by houaslam          #+#    #+#             */
+/*   Updated: 2022/10/29 17:15:53 by houaslam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,20 @@
 
 int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {
-	size_t	i;
+	size_t			i;
+	unsigned char	*str;
+	unsigned char	*str1;
 
 	i = 0;
-	if (n == 0)
-		return (0);
-	while (s1[i] && s2[i] && i < n - 1 && s1[i] == s2[i])
+	str = (unsigned char *)s1;
+	str1 = (unsigned char *)s2;
+	while ((i < n) && (str[i] != '\0' || str1[i] != '\0'))
+	{
+		if (str[i] > str1[i])
+			return (1);
+		else if (str[i] < str1[i])
+			return (-1);
 		i++;
-	if ((unsigned char) s1[i] < (unsigned char)s2[i])
-		return (-1);
-	else if ((unsigned char)s1[i] > (unsigned char)s2[i])
-		return (1);
-	else
-		return (0);
+	}
+	return (0);
 }

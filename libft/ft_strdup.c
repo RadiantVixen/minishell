@@ -3,35 +3,33 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strdup.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aatki <aatki@student.42.fr>                +#+  +:+       +#+        */
+/*   By: houaslam <houaslam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/13 13:39:32 by aatki             #+#    #+#             */
-/*   Updated: 2023/04/12 00:42:40 by aatki            ###   ########.fr       */
+/*   Created: 2022/10/10 12:39:11 by houaslam          #+#    #+#             */
+/*   Updated: 2022/11/03 18:34:00 by houaslam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strdup(const char *src)
+char	*ft_strdup(const char *s)
 {
-	char	*depliquer;
-	int		len;
-	int		i;
+	char	*s1;
+	size_t	i;
+	char	*s2;
 
-	len = 0;
 	i = 0;
-	if(!src)
-		return NULL;
-	while (src[len])
-		len++;
-	depliquer = (char *)malloc(sizeof (char) * (len + 1));
-	if (!depliquer)
-		return (0);
-	while (src[i])
+	s2 = (char *)s;
+	s1 = malloc(sizeof(char) * ft_strlen(s2) + 1);
+	if (s == NULL)
+		return (NULL);
+	if (!s1)
+		return (NULL);
+	while (i < ft_strlen(s2))
 	{
-		depliquer[i] = src[i];
+		s1[i] = s2[i];
 		i++;
 	}
-	depliquer[i] = '\0';
-	return (depliquer);
+	s1[i] = '\0';
+	return (s1);
 }

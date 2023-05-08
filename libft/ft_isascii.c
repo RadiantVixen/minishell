@@ -1,18 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_isascci.c                                       :+:      :+:    :+:   */
+/*   ft_isasciI.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aatki <aatki@student.42.fr>                +#+  +:+       +#+        */
+/*   By: houaslam <houaslam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/06 18:29:44 by aatki             #+#    #+#             */
-/*   Updated: 2022/10/23 16:32:39 by aatki            ###   ########.fr       */
+/*   Created: 2022/10/07 13:47:24 by houaslam          #+#    #+#             */
+/*   Updated: 2022/10/15 11:40:12 by houaslam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./libft.h"
+#include "libft.h"
 
-int	ft_isascii(int c)
+int	ft_isascii(int m)
 {
-	return ((c >= 0 && c <= 127));
+	if (m >= 0 && m <= 127)
+		return (1);
+	return (0);
 }
