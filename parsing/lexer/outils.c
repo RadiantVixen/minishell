@@ -6,7 +6,7 @@
 /*   By: houaslam <houaslam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/09 00:39:45 by houaslam          #+#    #+#             */
-/*   Updated: 2023/05/03 20:58:36 by houaslam         ###   ########.fr       */
+/*   Updated: 2023/06/17 16:26:31 by houaslam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,56 +44,59 @@ void	free_file(t_file **file)
 	head = NULL;
 }
 
-char	*seach_env_value(char *str, t_data *data)
+char	*find_ex(char *sa, char **env)
 {
-	t_env	*tmp;
+	int		i;
+	char	*s;
 
-	tmp = data->env;
-	while (tmp)
+	s = NULL;
+	i = 0;
+	while (env[i])
 	{
-		if (!ft_strcmp(str, tmp->name))
-			return (tmp->path);
-		tmp = tmp->next;
+		if (!ft_strncmp(env[i], sa, ft_strlen(sa))
+			&& env[i][ft_strlen(sa)] == '=')
+			s = ft_substr(env[i], ft_strlen(sa) + 1 \
+			, ft_strlen(env[i]) - ft_strlen(sa));
+		i++;
 	}
-	return (NULL);
+	if (!s)
+		s = ft_strdup("");
+	return (s);
 }
 
-int	print_token_er(t_data *data, int status, t_exec *tmp)
+t_exec	*print_token_er(t_data *data, int status, char *s1)
 {
-	(void)tmp;
-	printf("ERROR\n");
-	data->g_exit_status = status;
-	printf("exit status = %d\n", data->g_exit_status);
-	return (ft_strlen(data->s) - 1);
+	if (ft_strcmp(s1, " ambiguous redirect\n") == 0)
+		write(2, "bash: ambiguous redirect\n", 25);
+	else
+	{
+		write(2, "bash: syntax error near unexpected token", 41);
+		if (s1)
+			write(2, s1, ft_strlen(s1));
+	}
+	g_exit_status = status;
+	data->g_exit_status = 1;
+	return (ft_lstlast_exec(data->lexer));
 }
 
-void	aff1(t_exec *exec, t_file *file)
+void	add(t_data **data, int *i, int type)
 {
-	t_exec	*tmp;
-	t_file	*tmp_;
+	int		k;
+	char	*str;
 
-	tmp = exec;
-	tmp_ = file;
-	while (tmp != NULL)
+	k = *i;
+	(*i)++;
+	while ((*data)->s[*i] && ft_isstring \
+	((*data)->s[*i]) && (*data)->s[*i] != '$' && (*data)->s[*i] != '/')
 	{
-		printf("---->type = %d value = |%s|\n", tmp->type, tmp->value);
-		while (tmp_ != NULL)
-		{
-			printf("---->type = %d file = |%s|\n", tmp_->type, tmp_->file);
-			tmp_ = tmp_->next;
-		}
-		tmp = tmp->next;
+		if (ft_isstring((*data)->s[*i]))
+		(*i)++;
 	}
-}
-
-void	aff2(t_file *env)
-{
-	t_file	*tmp;
-
-	tmp = env;
-	while (tmp)
-	{
-		printf("---->type = %d file = |%s|\n", tmp->type, tmp->file);
-		tmp = tmp->next;
-	}
+	str = ft_substr((*data)->s, k, *i - k);
+	if (type == DOLLAR)
+		str = the_expande(*data, str);
+	ft_lstadd_back_exec(&(*data)->lexer, \
+	ft_lstnew_exec(str, type, NULL, (*data)->lexer));
+	free(str);
+	(*i)--;
 }

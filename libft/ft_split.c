@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aatki <aatki@student.42.fr>                +#+  +:+       +#+        */
+/*   By: houaslam <houaslam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/14 11:18:44 by houaslam          #+#    #+#             */
-/*   Updated: 2023/04/29 12:23:22 by aatki            ###   ########.fr       */
+/*   Updated: 2023/06/13 14:49:36 by houaslam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static int	ft_dim1(char *s, char c)
+int	ft_dim1(char *s, char c)
 {
 	int	i;
 	int	j;
@@ -32,9 +32,9 @@ static int	ft_dim1(char *s, char c)
 	return (j + 1);
 }
 
-static char	**ft_freestr(char **arr, int p)
+char	**ft_freestr(char **arr, int p)
 {
-	while (p >= 0)
+	while (p < 0)
 	{
 		free(arr[p]);
 		p--;
@@ -43,7 +43,7 @@ static char	**ft_freestr(char **arr, int p)
 	return (NULL);
 }
 
-static char	**ft_func(char **arr, char *s, char c)
+char	**ft_func(char **arr, char *s, char c)
 {
 	int	i;
 	int	p;

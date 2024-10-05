@@ -6,7 +6,7 @@
 /*   By: houaslam <houaslam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 16:45:15 by houaslam          #+#    #+#             */
-/*   Updated: 2023/05/03 21:16:04 by houaslam         ###   ########.fr       */
+/*   Updated: 2023/06/13 14:17:15 by houaslam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,28 +22,32 @@ void	ft_lstadd_back_exec(t_exec **lst, t_exec *new)
 	{
 		last = ft_lstlast_exec(*lst);
 		last->next = new;
+		new -> prev = last;
 	}
 	else
 		*lst = new;
 }
 
-t_exec	*ft_lstnew_exec(char *value, int type, t_file *file)
+t_exec	*ft_lstnew_exec(char *value, int type, t_file *file, t_exec *curr)
 {
-	t_exec	*node;
+	t_exec		*node;
+	static int	which;
 
 	node = malloc(sizeof(t_exec));
 	if (!node)
 		return (NULL);
-	node->value = malloc(ft_strlen(value) + 1);
-	if (!node->value)
-	{
-		free(node);
-		return (NULL);
-	}
-	ft_strcpy(node->value, value);
+	if (value)
+		node->value = ft_strdup(value);
+	else
+		node -> value = ft_strdup("\n");
 	node->type = type;
 	node->file = file;
 	node->next = NULL;
+	if (which == 0)
+		node->prev = NULL;
+	else
+		node->prev = curr;
+	which++;
 	return (node);
 }
 

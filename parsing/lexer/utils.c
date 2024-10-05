@@ -1,29 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strcmp.c                                        :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: houaslam <houaslam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/04/09 21:28:17 by houaslam          #+#    #+#             */
-/*   Updated: 2023/06/13 13:53:36 by houaslam         ###   ########.fr       */
+/*   Created: 2023/06/13 15:10:16 by houaslam          #+#    #+#             */
+/*   Updated: 2023/06/13 15:12:00 by houaslam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../minishell.h"
 
-int	ft_strcmp(char *str, char *str_2)
+int	simple_while(char **str)
 {
-	int	i;
+	int	k;
 
-	i = 0;
-	while (str[i] && str_2[i])
-	{
-		if (str[i] != str_2[i])
-			return (str[i] - str_2[i]);
-		i++;
-	}
-	if (str[i] || str_2[i])
-		return (1);
-	return (0);
+	k = 0;
+	while (str[k])
+		k++;
+	return (k);
 }

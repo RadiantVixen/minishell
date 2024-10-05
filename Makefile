@@ -3,16 +3,18 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: aatki <aatki@student.42.fr>                +#+  +:+       +#+         #
+#    By: houaslam <houaslam@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/14 22:47:05 by houaslam          #+#    #+#              #
-#    Updated: 2023/05/08 18:16:56 by aatki            ###   ########.fr        #
+#    Updated: 2023/06/20 21:41:50 by houaslam         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
 
-CFLAGS = -Wall -Wextra -Werror #-fsanitize=address -g3
+CFLAGS = -Wall -Wextra -Werror
+
+EXTRA_CFLAGS = -I ~/Users/houaslam/goinfre/homebrew/Cellar/readline/8.2.1/include  -L /Users/houaslam/goinfre/homebrew/Cellar/readline/8.2.1/lib -lreadline
 
 LIBFT = ./libft/ft_atoi.c \
 		./libft/ft_bzero.c \
@@ -60,44 +62,42 @@ BUILTINS =  ./executionn/builtins/utils.c\
 			./executionn/builtins/export.c\
 			./executionn/builtins/pwd.c\
 			./executionn/builtins/unset.c\
-			./executionn/builtins/export_utils.c
+			./executionn/builtins/export_utils.c\
 
 PIPEX =./executionn/pipex/pipex_bonus.c\
 		./executionn/pipex/pipex_utils_bonus.c\
-		./executionn/pipex/ft_split_bonus.c\
 		./executionn/pipex/here_doc.c\
-		./executionn/pipex/get_next_line.c\
-		./executionn/pipex/get_next_line_utils.c\
-		./executionn/pipex/open_files.c
+		./executionn/pipex/open_files.c\
+		./executionn/pipex/here_doc_utils.c\
+		./executionn/pipex/for_execution.c
 
 SRC =   global/main.c \
 		global/transmetter.c \
+		global/ft_split_bonus.c\
 		./parsing/libft_bonus/env_linked_list.c \
 		./parsing/libft_bonus/exec_linked_list.c \
 		./parsing/libft_bonus/file_linked_list.c \
 		./parsing/lexer/tokens_string.c \
 		./parsing/lexer/tokens_spec_char.c \
 		./parsing/lexer/outils.c \
+		./parsing/lexer/utils.c \
 		./parsing/lexer/lexer.c \
-		./parsing/lexer/ft_isstring.c
+		./parsing/lexer/ft_isstring.c \
+		./parsing/lexer/expand.c
 
 SRCS= ${SRC} ${PIPEX} ${BUILTINS} ${LIBFT}
 
 all : ${NAME}
 
 OBJ = ${SRCS:.c=.o}
+
 B_OBJ = ${B_SRCS:.c=.o}
 
-${NAME} : ${SRCS}
-	cc $(CFLAGS) ${SRCS} -o ${NAME}  -L/usr/local/lib -lreadline
+${NAME} : ${OBJ}
+	cc $(CFLAGS) ${OBJ} -o ${NAME} $(EXTRA_CFLAGS)
 
 clean :
 	rm -f ${OBJ}
-
-push :
-	git add .
-	git commit -m minishell
-	git push origin master
 
 fclean : clean
 	rm -f $(NAME)

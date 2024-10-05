@@ -6,7 +6,7 @@
 /*   By: houaslam <houaslam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 16:45:15 by houaslam          #+#    #+#             */
-/*   Updated: 2023/04/16 08:57:42 by houaslam         ###   ########.fr       */
+/*   Updated: 2023/05/10 17:13:07 by houaslam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	ft_lstadd_back_file(t_file **lst, t_file *new)
 		*lst = new;
 }
 
-t_file	*ft_lstnew_file(char *file, int type)
+t_file	*ft_lstnew_file(char *file, int type, int expand)
 {
 	t_file	*node;
 
@@ -42,6 +42,7 @@ t_file	*ft_lstnew_file(char *file, int type)
 	}
 	ft_strcpy(node->file, file);
 	node->type = type;
+	node->expand = expand;
 	node->next = NULL;
 	return (node);
 }

@@ -3,140 +3,140 @@
 /*                                                        :::      ::::::::   */
 /*   tokens_spec_char.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aatki <aatki@student.42.fr>                +#+  +:+       +#+        */
+/*   By: houaslam <houaslam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/04 22:56:12 by houaslam          #+#    #+#             */
-/*   Updated: 2023/05/08 14:32:32 by aatki            ###   ########.fr       */
+/*   Updated: 2023/06/18 00:45:42 by houaslam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int	handle_here_doc_in(t_data *data, int i)
+t_exec	*handle_here_doc_in2(t_data *data, t_exec *lexer, int *nb)
 {
-	int		k;
 	char	*str;
 
-	i += 2;
-	while (data->s[i] == 32 || data->s[i] == 9)
-		i++;
-	k = i;
-	while (data->s[i] && ft_isstring(data->s[i]))
-		i++;
-	str = ft_substr(data->s, k, i - k);
-	if (str[0] == '\0' || i - k == 0)
+	if (lexer ->type == STRING)
 	{
-		free(str);
-		return (print_token_er(data, 1, NULL));
+		ft_lstadd_back_file(&data -> tmp_f, ft_lstnew_file \
+		(lexer->value, H_IN, 0));
+		(*nb)++;
 	}
-	if (data->f == 0)
+	else if ((lexer ->type == S_QUOT || lexer ->type == D_QUOT))
 	{
-		data -> tmp_f->file = ft_strjoin_free(data -> tmp_f->file, str);
-		data -> tmp_f->type = HERE_DOC_IN;
-		data->f = 1;
+		lexer = lexer->next;
+		str = ft_substr(lexer->value, 0, ft_strlen(lexer->value));
+		ft_lstadd_back_file(&data -> tmp_f, ft_lstnew_file \
+		(str, H_IN, 1));
+		lexer = lexer->next;
+		(*nb)++;
+	}
+	else if (lexer->type == DOLLAR)
+	{
+		lexer = handle_dollar(data, lexer, 1, 0);
+		(*nb)++;
 	}
 	else
-		ft_lstadd_back_file(&data -> tmp_f, ft_lstnew_file(str, HERE_DOC_IN));
-	free(str);
-	return (i);
+		return (print_token_er(data, 258, "`<<'\n"));
+	return (lexer);
 }
 
-int	handle_here_doc_out(t_data *data, int i)
+t_exec	*handle_here_doc_in(t_data *data, t_exec *lexer)
 {
-	int		k;
+	if (lexer -> next)
+		lexer = lexer->next;
+	while (lexer && (lexer->type == SPACE || lexer->type == TAB))
+		lexer = lexer->next;
+	if (!lexer)
+		return (print_token_er(data, 258, "`<<'\n"));
+	else
+		lexer = handle_here_doc_in2(data, lexer, &data->h_nb);
+	if (data->h_nb > 16)
+	{
+		ft_errorb("bash: ", "maximum here-document count exceeded\n", NULL, 2);
+		exit(2);
+	}
+	return (lexer);
+}
+
+t_exec	*handle_here_doc_out(t_data *data, t_exec *lexer)
+{
 	char	*str;
 
-	i += 2;
-	while (data->s[i] == 32 || data->s[i] == 9)
-		i++;
-	k = i;
-	while (data->s[i] && ft_isstring(data->s[i]))
-		i++;
-	str = ft_substr(data->s, k, i - k);
-	if (str[0] == '\0' || i - k == 0)
+	if (lexer -> next)
+		lexer = lexer->next;
+	while (lexer && (lexer->type == SPACE || lexer->type == TAB))
+		lexer = lexer->next;
+	if (!lexer)
+		return (print_token_er(data, 258, "`newline'\n"));
+	else if (lexer ->type == STRING)
+		ft_lstadd_back_file(&data -> tmp_f, ft_lstnew_file \
+		(lexer->value, H_OUT, 0));
+	else if (lexer ->type == S_QUOT || lexer ->type == D_QUOT)
 	{
-		free(str);
-		return (print_token_er(data, 1, NULL));
+		str = ft_substr(lexer->value, 1, ft_strlen(lexer->value) - 1);
+		ft_lstadd_back_file(&data -> tmp_f, \
+		ft_lstnew_file(str, H_OUT, 1));
 	}
-	if (data->f == 0)
-	{
-		data -> tmp_f->file = ft_strjoin_free(data -> tmp_f->file, str);
-		data -> tmp_f->type = HERE_DOC_OUT;
-		data->f = 1;
-	}
+	else if (lexer->type == DOLLAR)
+		lexer = handle_dollar(data, lexer, 1, 0);
 	else
-		ft_lstadd_back_file(&data -> tmp_f, ft_lstnew_file(str, HERE_DOC_OUT));
-	free(str);
-	return (i);
+		return (print_token_er(data, 258, "`>>'\n"));
+	return (lexer);
 }
 
-int	handle_redin(t_data *data, int i)
+t_exec	*handle_redout(t_data *data, t_exec *lexer)
 {
-	int		k;
 	char	*str;
 
-	i++;
-	while (data->s[i] == 32 || data->s[i] == 9)
-		i++;
-	k = i;
-	while (data->s[i] && ft_isstring(data->s[i]))
-		i++;
-	str = ft_substr(data->s, k, i - k);
-	if (str[0] == '\0' || i - k == 0)
+	if (lexer -> next)
+		lexer = lexer->next;
+	while (lexer && (lexer->type == SPACE || lexer->type == TAB))
+		lexer = lexer->next;
+	if (!lexer)
+		return (print_token_er(data, 258, "`>'\n"));
+	else if (lexer && lexer -> type == STRING)
 	{
-		free(str);
-		return (print_token_er(data, 1, NULL));
+		ft_lstadd_back_file(&data -> tmp_f, \
+		ft_lstnew_file(lexer->value, R_OUT, 0));
 	}
-	if (data->f == 0)
+	else if (lexer && (lexer ->type == S_QUOT || lexer ->type == D_QUOT))
 	{
-		data -> tmp_f->file = ft_strjoin_free(data -> tmp_f->file, str);
-		data -> tmp_f->type = RED_IN;
-		data->f = 1;
+		str = ft_substr(lexer->value, 1, \
+		ft_strlen(lexer->value) - 1);
+		ft_lstadd_back_file(&data -> tmp_f, ft_lstnew_file(str, R_OUT, 0));
 	}
+	else if (lexer->type == DOLLAR)
+		lexer = handle_dollar(data, lexer, 1, 0);
 	else
-		ft_lstadd_back_file(&data -> tmp_f, ft_lstnew_file(str, RED_IN));
-	free(str);
-	return (i - 1);
+		return (print_token_er(data, 258, "`>'\n"));
+	return (lexer);
 }
 
-int	handle_redout(t_data *data, int i)
+t_exec	*handle_redin(t_data *data, t_exec *lexer)
 {
-	int		k;
 	char	*str;
 
-	i++;
-	while (data->s[i] == 32 || data->s[i] == 9)
-		i++;
-	k = i;
-	while (data->s[i] && ft_isstring(data->s[i]))
-		i++;
-	str = ft_substr(data->s, k, i - k);
-	if (str[0] == '\0' || i - k == 0)
+	if (lexer -> next)
+		lexer = lexer->next;
+	while (lexer && (lexer->type == SPACE || lexer->type == TAB))
+		lexer = lexer->next;
+	if (!lexer)
+		return (print_token_er(data, 258, "`<'\n"));
+	if (lexer ->type == STRING)
 	{
-		free(str);
-		return (print_token_er(data, 1, NULL));
+		ft_lstadd_back_file(&data -> tmp_f, \
+		ft_lstnew_file(lexer->value, R_IN, 0));
 	}
-	if (data->f == 0)
+	else if (lexer ->type == S_QUOT || lexer ->type == D_QUOT)
 	{
-		data -> tmp_f->file = ft_strjoin_free(data -> tmp_f->file, str);
-		data -> tmp_f->type = RED_OUT;
-		data->f = 1;
+		str = ft_substr(lexer->value, 1, \
+		ft_strlen(lexer->value) - 1);
+		ft_lstadd_back_file(&data -> tmp_f, ft_lstnew_file(str, R_IN, 0));
 	}
+	else if (lexer->type == DOLLAR)
+		lexer = handle_dollar(data, lexer, 1, 0);
 	else
-		ft_lstadd_back_file(&data -> tmp_f, ft_lstnew_file(str, RED_OUT));
-	free(str);
-	return (i - 1);
-}
-
-int	handle_dollar(t_data *data, int i, int k)
-{
-	char	*res;
-
-	res = ft_substr(data->s, k, i - k);
-	data -> tmp->value = ft_strjoin_free(data -> tmp->value, res);
-	data -> tmp->value = ft_strjoin_free(data -> tmp->value, "*");
-	data -> tmp->value = ft_strjoin_free(data -> tmp->value, "$");
-	data -> tmp->value = ft_strjoin_free(data -> tmp->value, "*");
-	k = i + 1;
-	return (k);
+		return (print_token_er(data, 258, "`<'\n"));
+	return (lexer);
 }
